@@ -43,6 +43,14 @@ The dashboard reads these existing tables:
 
 The first version loads the latest 100 rows per table, supports a text search across loaded records, and exports the displayed filtered rows as CSV. Counts are queried separately across the full tables.
 
-## Current scope
+## Advanced research features
 
-This is the initial dashboard foundation. It does not yet include advanced insider-cluster scoring, cross-quarter 13F comparisons, watchlists, or custom alert rules.
+Run `supabase/advanced_features.sql` once in Supabase Dashboard → SQL Editor after deploying this update. It creates user-scoped watchlist and alert-rule tables with row-level security. Each authenticated user can access only their own saved items and rules.
+
+The dashboard then adds:
+- **Insider clusters:** groups loaded Form 4 rows by issuer and week, counting distinct insiders.
+- **13F comparison:** compares the two most recent report periods among the latest 5,000 loaded holding rows, matching institution CIK + CUSIP + put/call.
+- **Watchlist:** save tickers, companies, FDA product codes and CUSIPs.
+- **Alert rules:** configure minimum distinct insiders and aggregate reported value, by ticker or globally.
+
+**Signal limitations:** The current Form 4 ingestion schema does not include transaction codes, so cluster analysis cannot distinguish purchases from sales. It is a review signal, not a buy/sell recommendation. Alert rules are evaluated in the dashboard on load/refresh; they do not yet send push, email or Discord notifications. 13F comparisons are limited to the latest 5,000 rows fetched by the client and may be incomplete if a reporting period exceeds that limit.
